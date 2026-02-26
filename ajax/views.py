@@ -2,7 +2,6 @@ from django.http import Http404, JsonResponse
 from django.views import View
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormMixin, FormView
-from django.utils import log
 
 from time import sleep
 
@@ -10,7 +9,7 @@ from .forms import FiobonacciForm
 
 
 def _calculate_fibonacci_numbers(index):
-    sleep(2)
+    sleep(1)
     numbers = [1, 1]
     while len(numbers) < index:
         numbers.append(sum(numbers[-2:]))
