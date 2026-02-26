@@ -67,8 +67,7 @@ class FormDemoGet(FormView):
     form_class = FiobonacciForm
 
 
-class FormDemoPost(FormMixin, View):
-    form_class = FiobonacciForm
+class FormDemoPost(View):
 
     def post(self, request, *args, **kwargs):
         form = FiobonacciForm(self.request.POST)
