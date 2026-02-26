@@ -17,7 +17,7 @@ $(document).ready(
                 // AJAX post request to get Fibonacci numbers up to the given index
                 // Runs in the background, then updates the page
                 $.ajax({
-                    url: btn_demo_url,
+                    url: fibonacci_url,
                     type: "post",
                     // Add the CSRF token and number of clicks to the form data
                     data: {
