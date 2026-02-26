@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Ajax Form Demo{% endblock title %}
+
+{% block head %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+    $(document).ready(
+        function(){
+            // Function to clear outputs
+            function clearOutput(){
+                console.log("Clearing output")
+                $("#index-p")[0].innerHTML = "";
+                $("#number-p")[0].innerHTML = "";
+                $("#sequence-p")[0].innerHTML = "";
+            };
+
+            // Clear outputs when submit button clicked
+            $("#fibonacci-btn").on(
+                "click",
+                clearOutput
+            );
+
+            // Run AJAX update when valid form submitted
+            $("#fibonacci-form").on(
+                "submit",
+                function(){
+                    // Clear output if form invalid
+                    if (!$("#fibonacci-form")[0].reportValidity()) {
+                        return;
+                    }
+                    console.log("Sending AJAX request");
+                    $("#fibonacci-btn")[0].disabled = true;
+                    $("#spinner-div")[0].innerHTML = '<div class="lds-dual-ring"></div>';
+                    // AJAX post request to get Fibonacci numbers up to the given index
+                    // Runs in the background, then updates the page
+                    $.ajax({
+                        url: "{% url 'form_demo' %}",
+                        type: "post",
+                        // Add the CSRF token to the form data
+                        data: {
+                            ...{"csrfmiddlewaretoken": "{{ csrf_token }}"},
+                            ...Object.fromEntries(new FormData($("#fibonacci-form")[0]))
+                        },
+                        success: function(data) {
+                            $("#fibonacci-btn")[0].disabled = false;
+                            // Replace the output with the response from the server
+                            $("#index-p")[0].innerHTML = "Index: " + data.index;
+                            $("#number-p")[0].innerHTML = "Number: " + data.number;
+                            $("#sequence-p")[0].innerHTML = "Sequence: " + data.sequence;
+                            $("#spinner-div")[0].innerHTML = "";
+                        },
+                        failure: function(data) {
+                            alert("Got an error dude");
+                        }
+                    });
+                }
+            );
+        }
+    )
+</script>
+{% endblock head %}
+
+{% block content %}
+<h2>Ajax Test</h2>
+<p>Calculate Fibonacci numbers.</p>
+<!-- Prevent the form from sending the request -->
+<form id="fibonacci-form" onsubmit="event.preventDefault();">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" id="fibonacci-btn" value="Go">
+</form>
+<div>
+    <div id="spinner-div"></div>
+    <p id="index-p"></p>
+    <p id="number-p"></p>
+    <p id="sequence-p"></p>
+</div>
+{% endblock content %}
